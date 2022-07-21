@@ -119,6 +119,15 @@ int udp_sendto(struct udp_socket* s, const void* buffer, int size, struct endpoi
     return t_size;
 }
 
+void udp_async_connect(struct udp_socket* s, struct endpoint ep,
+                       udp_connect_callback callback, void* obj);
+
+void udp_async_recvfrom(struct udp_socket* s, void* buffer, int size, struct endpoint* ep,
+                       udp_recv_callback callback, void* obj);
+
+void udp_async_sendto(struct udp_socket* s, const void* buffer, int size, struct endpoint* ep,
+                    udp_send_callback callback, void* obj);
+
 
 #ifdef __cplusplus
 }

@@ -190,6 +190,17 @@ int tcp_send(struct tcp_socket* s, const void* buffer, int size,
 }
 
 
+void tcp_async_accept(struct tcp_acceptor* acceptor, struct tcp_socket* socket,
+                      tcp_accept_callback callback, void* obj);
+
+void tcp_async_connect(struct tcp_socket* s, struct endpoint ep,
+                       tcp_connect_callback callback, void* obj);
+
+void tcp_async_receive(struct tcp_socket* s, void* buffer, int size,
+                       tcp_recv_callback callback, void* obj);
+
+void tcp_async_send(struct tcp_socket* s, const void* buffer, int size,
+                    tcp_send_callback callback, void* obj);
 
 #ifdef __cplusplus
 }
