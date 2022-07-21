@@ -104,7 +104,7 @@ int udp_recvfrom(struct udp_socket* s, void* buffer, int size, struct endpoint* 
 }
 
 static inline
-int udp_sendto(struct udp_socket* s, void* buffer, int size, struct endpoint* ep, udp_send_callback callback, void* obj)
+int udp_sendto(struct udp_socket* s, const void* buffer, int size, struct endpoint* ep, udp_send_callback callback, void* obj)
 {
     int err = 0;
     int t_size = sendto(s->socket, buffer, size, 0, &ep->sa, ep->sa_len);
