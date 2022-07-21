@@ -36,7 +36,7 @@ struct udp_socket* udp_bind(void* ctx, struct endpoint ep)
     udp->ctx = ctx;
     udp->ep = ep;
 
-    return s;
+    return udp;
 }
 
 static inline
