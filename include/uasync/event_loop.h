@@ -1,10 +1,6 @@
 #ifndef EVENT_LOOP_H_ 
 #define EVENT_LOOP_H_ 
 
-#include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
-
 #include "uasync/callable.h"
 
 #ifdef __cplusplus

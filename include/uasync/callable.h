@@ -1,9 +1,7 @@
 #ifndef CALLABLE_H_
 #define CALLABLE_H_
 
-#include <stdarg.h>
 #include <stdint.h>
-#include <string.h>
 #include <stdlib.h>
 
 #ifdef __cplusplus
