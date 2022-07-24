@@ -1,4 +1,5 @@
 build/
 .cache/
 tags
-
+.old/
+.DS_Store
