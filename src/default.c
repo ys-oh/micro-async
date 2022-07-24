@@ -58,21 +58,12 @@ void event_loop_release(void* ctx)
         ev_loop_destroy (ctx);
 }
 
-void event_entry_init(event_entry* entry)
-{
-    void (*io_cb)(EV_P_ ev_io*, short) = ev_io_cb;
-    void (*to_cb)(EV_P_ ev_timer*, short) = ev_to_cb;
-
-    ev_init(&entry->io, (void*)io_cb);
-    ev_init(&entry->to, (void*)to_cb);
-}
-
 void event_loop_add_io_event(void* ctx, int fd, int ev_flag, callable_obj_base* obj)
 {
     struct ev_loop* loop = ctx ? (struct ev_loop*)ctx : ev_default_loop(0);
 
     event_entry* entry = event_entry_malloc();
-    event_entry_init(entry);
+    ev_init(&entry->io, (void*)ev_io_cb);
 
     entry->callable = obj;
 
@@ -92,7 +83,7 @@ void event_loop_add_timed_event(void* ctx, uint64_t timeout, callable_obj_base* 
     struct ev_loop* loop = ctx ? (struct ev_loop*)ctx : ev_default_loop(0);
 
     event_entry* entry = event_entry_malloc();
-    event_entry_init(entry);
+    ev_init(&entry->to, (void*)ev_to_cb);
 
     entry->callable = obj;
 
