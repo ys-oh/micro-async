@@ -58,7 +58,7 @@ struct tcp_acceptor* tcp_bind(void* ctx, struct endpoint ep)
     if (bind(s, &ep.sa, ep.sa_len) < 0)
         goto close_return;
 
-    if (listen(s, 1) < 0)
+    if (listen(s, 5) < 0)
         goto close_return;
 
     struct tcp_acceptor* acceptor = mem_alloc(sizeof(struct tcp_acceptor));
@@ -92,6 +92,9 @@ static inline int make_nonblock(int fd)
     */
     int flag;
     flag = fcntl(fd, F_GETFL, 0 );
+    if (flag & O_NONBLOCK)
+        return flag;
+
     flag |= O_NONBLOCK;
     fcntl(fd, F_SETFL, flag);
 
@@ -134,7 +137,7 @@ static inline
 int tcp_connect(struct tcp_socket* s, struct endpoint ep,
                 tcp_connect_callback callback, void* obj)
 {
-    if (s->socket <= 0)
+    if (s->socket < 0)
         s->socket = socket(ep.sa.sa_family, SOCK_STREAM, 0);
 
     int err = 0;
