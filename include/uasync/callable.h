@@ -122,6 +122,7 @@ typedef struct callable_obj_base {
 #define PASS_ARG(arg, N) arg
 #define COMMA_ARG(arg, N) ,arg
 #define TYPE_PLACE_ARG(type, N) type ARG_CAT(_, N);
+#define COMMA_PLACE(_ignored, N) , _ ## N
 #define COMMA_PLACE_ARG(arg, N) , arg _ ## N
 #define COMMA_INVOKE_ARG(_ignored, N) , ARG_CAT(obj->_, N)
 #define INIT_PLACE_ARG(_ignored, N) ARG_CAT(obj->_, N) = ARG_CAT(_, N);
@@ -144,6 +145,12 @@ typedef struct callable_obj_base {
         obj->base.invoke = callable_obj_ ## name ## _invoke; \
         obj->fn = callable_obj_ ## name ## _handler; \
         ARG_APPEND(INIT_PLACE_ARG, __VA_ARGS__); \
+    } \
+    static inline callable_obj_base * callable_obj_ ## name ## _new( \
+                COMMA_UNWRAP(ARG_APPEND(COMMA_PLACE_ARG, __VA_ARGS__))) { \
+        callable_obj_ ## name * obj = (callable_obj_ ## name *)malloc(sizeof (callable_obj_ ## name )); \
+        callable_obj_ ## name ## _init(obj ARG_APPEND(COMMA_PLACE, __VA_ARGS__)); \
+        return (callable_obj_base *)obj; \
     }
 
 /**example
@@ -166,6 +173,12 @@ typedef struct callable_obj_base {
  *      CALLABLE_OBJ(mycallable)* obj_ptr = (CALLABLE_OBJ(mycallable)*)malloc (sizeof (CALLABLE_OBJ(mycallable));
  *      CALLABLE_INIT(mycallable, obj_ptr, 10, 20, "ptr init");
  *
+ *      ...
+ *
+ *      callable_obj_base* callable = CALLABLE_NEW(mycallable, 100, 200, "new obj");
+ *      callable_invoke(callable);
+ *      callable_free(callable);
+ *
  */
 #define CALLABLE_DEFINE(name, ...) \
     CALLABLE_DECALRE(name, ARG_ODD(__VA_ARGS__)) \
@@ -174,11 +187,17 @@ typedef struct callable_obj_base {
 #define CALLABLE_ARG(type, var) type, var
 #define CALLABLE_OBJ(name) callable_obj_##name
 #define CALLABLE_INIT(name, obj, ...) callable_obj_##name##_init(obj, __VA_ARGS__)
+#define CALLABLE_NEW(name, ...) callable_obj_ ## name ## _new(__VA_ARGS__)
 
 #define CALLABLE_INITIALIZER(name, ...) \
       { {callable_obj_ ## name ## _invoke}, \
         callable_obj_ ## name ## _handler \
         ARG_APPEND(COMMA_ARG, __VA_ARGS__) }
+
+static inline void callable_free(callable_obj_base* obj)
+{
+    free (obj);
+}
 
 static inline void callable_invoke(callable_obj_base* obj)
 {
