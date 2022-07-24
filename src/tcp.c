@@ -37,7 +37,7 @@ void tcp_async_connect(struct tcp_socket* s, struct endpoint ep,
 {
     s->ep = ep;
     CALLABLE_OBJ(tcp_connect)* callable = (CALLABLE_OBJ(tcp_connect)*)
-                                          mem_alloc(sizeof(CALLABLE_OBJ(tcp_connect)));
+                                          malloc(sizeof(CALLABLE_OBJ(tcp_connect)));
 
     CALLABLE_INIT(tcp_connect, callable, s, &s->ep, callback, obj);
 
@@ -58,7 +58,7 @@ void tcp_async_receive(struct tcp_socket* s, void* buffer, int size,
                        tcp_recv_callback callback, void* obj)
 {
     CALLABLE_OBJ(tcp_receive)* callable = (CALLABLE_OBJ(tcp_receive)*)
-                                          mem_alloc(sizeof(CALLABLE_OBJ(tcp_receive)));
+                                          malloc(sizeof(CALLABLE_OBJ(tcp_receive)));
 
     CALLABLE_INIT(tcp_receive, callable, s, buffer, size, callback, obj);
 
@@ -79,7 +79,7 @@ void tcp_async_send(struct tcp_socket* s, const void* buffer, int size,
                     tcp_send_callback callback, void* obj)
 {
     CALLABLE_OBJ(tcp_send)* callable = (CALLABLE_OBJ(tcp_send)*)
-                                      mem_alloc(sizeof(CALLABLE_OBJ(tcp_send)));
+                                      malloc(sizeof(CALLABLE_OBJ(tcp_send)));
 
     CALLABLE_INIT(tcp_send, callable, s, buffer, size, callback, obj);
 

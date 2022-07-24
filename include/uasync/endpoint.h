@@ -49,14 +49,6 @@ static inline struct endpoint endpoint_ipv4(const char* host, int port)
     return ep;
 }
 
-#ifndef mem_alloc
-#define mem_alloc(x) malloc(x)
-#endif
-
-#ifndef mem_free
-#define mem_free(x)  free(x)
-#endif
-
 #ifdef __cplusplus
 }
 #endif

@@ -27,7 +27,7 @@ struct tcp_acceptor
 static inline
 struct tcp_socket* tcp_socket_new(void* ctx)
 {
-    struct tcp_socket* s = mem_alloc(sizeof(struct tcp_socket));
+    struct tcp_socket* s = (struct tcp_socket*)malloc(sizeof(struct tcp_socket));
     bzero(s, sizeof(struct tcp_socket));
     s->socket = -1;
     s->ctx = ctx;
@@ -40,7 +40,7 @@ void tcp_socket_release(struct tcp_socket* s)
     if (s->socket > 0)
         close(s->socket);
 
-    mem_free(s);
+    free(s);
 }
 
 static inline
@@ -61,7 +61,7 @@ struct tcp_acceptor* tcp_bind(void* ctx, struct endpoint ep)
     if (listen(s, 5) < 0)
         goto close_return;
 
-    struct tcp_acceptor* acceptor = mem_alloc(sizeof(struct tcp_acceptor));
+    struct tcp_acceptor* acceptor = (struct tcp_acceptor*)malloc(sizeof(struct tcp_acceptor));
     acceptor->ep = ep;
     acceptor->socket = s;
     acceptor->ctx = ctx;
@@ -77,7 +77,7 @@ static inline
 void tcp_acceptor_release(struct tcp_acceptor* acceptor)
 {
     close (acceptor->socket);
-    mem_free(acceptor);
+    free(acceptor);
 }
 
 #include <fcntl.h>

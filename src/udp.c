@@ -15,7 +15,7 @@ void udp_async_connect(struct udp_socket* s, struct endpoint ep,
 {
     s->ep = ep;
     CALLABLE_OBJ(udp_connect)* callable = (CALLABLE_OBJ(udp_connect)*)
-                                          mem_alloc(sizeof(CALLABLE_OBJ(udp_connect)));
+                                          malloc(sizeof(CALLABLE_OBJ(udp_connect)));
 
     CALLABLE_INIT(udp_connect, callable, s, &s->ep, callback, obj);
 
@@ -37,7 +37,7 @@ void udp_async_recvfrom(struct udp_socket* s, void* buffer, int size, struct end
                        udp_recv_callback callback, void* obj)
 {
     CALLABLE_OBJ(udp_recvfrom)* callable = (CALLABLE_OBJ(udp_recvfrom)*)
-                                          mem_alloc(sizeof(CALLABLE_OBJ(udp_recvfrom)));
+                                          malloc(sizeof(CALLABLE_OBJ(udp_recvfrom)));
 
     CALLABLE_INIT(udp_recvfrom, callable, s, buffer, size, ep, callback, obj);
 
@@ -59,7 +59,7 @@ void udp_async_sendto(struct udp_socket* s, const void* buffer, int size, struct
                     udp_send_callback callback, void* obj)
 {
     CALLABLE_OBJ(udp_sendto)* callable = (CALLABLE_OBJ(udp_sendto)*)
-                                          mem_alloc(sizeof(CALLABLE_OBJ(udp_sendto)));
+                                          malloc(sizeof(CALLABLE_OBJ(udp_sendto)));
 
     CALLABLE_INIT(udp_sendto, callable, s, buffer, size, ep, callback, obj);
 

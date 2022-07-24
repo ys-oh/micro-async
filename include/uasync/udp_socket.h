@@ -31,7 +31,7 @@ struct udp_socket* udp_bind(void* ctx, struct endpoint ep)
     if (bind(s, &ep.sa, ep.sa_len) < 0)
         return NULL;
 
-    struct udp_socket* udp = mem_alloc(sizeof(struct udp_socket));
+    struct udp_socket* udp = (struct udp_socket*)malloc(sizeof(struct udp_socket));
     udp->socket = s;
     udp->ctx = ctx;
     udp->ep = ep;
@@ -42,7 +42,7 @@ struct udp_socket* udp_bind(void* ctx, struct endpoint ep)
 static inline
 struct udp_socket* udp_socket(void* ctx)
 {
-    struct udp_socket* udp = mem_alloc(sizeof(struct udp_socket));
+    struct udp_socket* udp = (struct udp_socket*)malloc(sizeof(struct udp_socket));
     bzero(udp, sizeof(struct udp_socket));
     udp->socket = -1;
 
@@ -55,7 +55,7 @@ void udp_socket_release(struct udp_socket* s)
     if (s->socket >= 0)
         close(s->socket);
 
-    mem_free(s);
+    free(s);
 }
 
 typedef void (*udp_connect_callback)(int err, struct udp_socket* s, struct endpoint* ep, void* obj);
