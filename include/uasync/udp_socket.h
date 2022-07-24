@@ -40,7 +40,7 @@ struct udp_socket* udp_bind(void* ctx, struct endpoint ep)
 }
 
 static inline
-struct udp_socket* udp_socket(void* ctx)
+struct udp_socket* udp_socket_new(void* ctx)
 {
     struct udp_socket* udp = (struct udp_socket*)malloc(sizeof(struct udp_socket));
     bzero(udp, sizeof(struct udp_socket));
@@ -103,6 +103,12 @@ int udp_recvfrom(struct udp_socket* s, void* buffer, int size, struct endpoint* 
     return r_size;
 }
 
+static inline 
+int udp_receive(struct udp_socket* s, void* buffer, int size, udp_recv_callback callback, void* obj)
+{
+    return udp_recvfrom(s, buffer, size, &s->ep, callback, obj);
+}
+
 static inline
 int udp_sendto(struct udp_socket* s, const void* buffer, int size, struct endpoint* ep, udp_send_callback callback, void* obj)
 {
@@ -117,6 +123,12 @@ int udp_sendto(struct udp_socket* s, const void* buffer, int size, struct endpoi
         callback(err, s, ep, t_size, obj);
 
     return t_size;
+}
+
+static inline 
+int udp_send(struct udp_socket* s, const void* buffer, int size, udp_send_callback callback, void* obj)
+{
+    return udp_sendto(s, buffer, size, &s->ep, callback, obj);
 }
 
 void udp_async_connect(struct udp_socket* s, struct endpoint ep,
