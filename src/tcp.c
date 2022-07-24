@@ -16,7 +16,7 @@ void tcp_async_accept(struct tcp_acceptor* acceptor, struct tcp_socket* socket,
                       tcp_accept_callback callback, void* obj)
 {
     CALLABLE_OBJ(tcp_accept)* callable = (CALLABLE_OBJ(tcp_accept)*)
-                                        mem_alloc(sizeof(CALLABLE_OBJ(tcp_accept)));
+                                        malloc(sizeof(CALLABLE_OBJ(tcp_accept)));
 
     CALLABLE_INIT(tcp_accept, callable, acceptor, socket, callback, obj);
 
