@@ -1,3 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(uasync-samples)
+
+find_package(uasync)
 
 # tcp samples
 add_executable(tcp_client tcp_client.c)

@@ -15,4 +15,3 @@ target_sources(uasync
         src/udp.c
 )
 
-add_subdirectory(samples)
