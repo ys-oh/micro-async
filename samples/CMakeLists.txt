@@ -25,3 +25,8 @@ target_link_libraries(udp_client PUBLIC uasync)
 add_executable(udp_server udp_server.c)
 target_link_libraries(udp_server PUBLIC uasync)
 
+add_executable(udp_async_client udp_async_client.c)
+target_link_libraries(udp_async_client PUBLIC uasync)
+
+add_executable(udp_async_server udp_async_server.c)
+target_link_libraries(udp_async_server PUBLIC uasync)
