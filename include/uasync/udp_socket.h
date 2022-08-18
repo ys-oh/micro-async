@@ -66,7 +66,7 @@ static inline
 int udp_connect(struct udp_socket* s, struct endpoint ep, udp_connect_callback callback, void* obj)
 {
     if (s->socket <= 0)
-        s->socket = socket(ep.sa.sa_family, SOCK_STREAM, 0);
+        s->socket = socket(ep.sa.sa_family, SOCK_DGRAM, 0);
 
     int err = connect(s->socket, &ep.sa, ep.sa_len);
     if (err != 0)
@@ -115,7 +115,7 @@ int udp_sendto(struct udp_socket* s, const void* buffer, int size, struct endpoi
     int err = 0;
     int t_size = sendto(s->socket, buffer, size, 0, &ep->sa, ep->sa_len);
     if (t_size < 0)
-        err = errno;
+        err = -errno;
     else if (t_size == 0)
         err = -1;
 
