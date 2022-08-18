@@ -1,27 +1,6 @@
 #include "uasync/udp_socket.h"
 #include "uasync/event_loop.h"
 
-CALLABLE_DEFINE(udp_connect,
-    CALLABLE_ARG(struct udp_socket*, socket),
-    CALLABLE_ARG(struct endpoint*, ep),
-    CALLABLE_ARG(udp_connect_callback, callback),
-    CALLABLE_ARG(void*, obj))
-{
-    udp_connect(socket, *ep, callback, obj);
-}
-
-void udp_async_connect(struct udp_socket* s, struct endpoint ep,
-                       udp_connect_callback callback, void* obj)
-{
-    s->ep = ep;
-    CALLABLE_OBJ(udp_connect)* callable = (CALLABLE_OBJ(udp_connect)*)
-                                          malloc(sizeof(CALLABLE_OBJ(udp_connect)));
-
-    CALLABLE_INIT(udp_connect, callable, s, &s->ep, callback, obj);
-
-    event_loop_add_timed_event(s->ctx, 1000000, (callable_obj_base*)callable);
-}
-
 CALLABLE_DEFINE(udp_recvfrom,
     CALLABLE_ARG(struct udp_socket*, socket),
     CALLABLE_ARG(void*, buffer),

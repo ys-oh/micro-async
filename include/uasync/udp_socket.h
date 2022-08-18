@@ -17,34 +17,12 @@ struct udp_socket {
 };
 
 static inline
-struct udp_socket* udp_bind(void* ctx, struct endpoint ep)
-{
-    int s = socket(ep.sa.sa_family, SOCK_DGRAM, 0);
-    if (s < 0)
-        return NULL;
-
-#ifdef SO_REUSEPORT
-    int opt = 1;
-    setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(int));
-#endif
-
-    if (bind(s, &ep.sa, ep.sa_len) < 0)
-        return NULL;
-
-    struct udp_socket* udp = (struct udp_socket*)malloc(sizeof(struct udp_socket));
-    udp->socket = s;
-    udp->ctx = ctx;
-    udp->ep = ep;
-
-    return udp;
-}
-
-static inline
-struct udp_socket* udp_socket_new(void* ctx)
+struct udp_socket* udp_socket(void* ctx, struct endpoint ep)
 {
     struct udp_socket* udp = (struct udp_socket*)malloc(sizeof(struct udp_socket));
     bzero(udp, sizeof(struct udp_socket));
-    udp->socket = -1;
+    udp->socket = socket(ep.sa.sa_family, SOCK_DGRAM, 0);
+    udp->ep = ep;
 
     return udp;
 }
@@ -58,34 +36,26 @@ void udp_socket_release(struct udp_socket* s)
     free(s);
 }
 
-typedef void (*udp_connect_callback)(int err, struct udp_socket* s, struct endpoint* ep, void* obj);
+static inline
+struct udp_socket* udp_bind(void* ctx, struct endpoint ep)
+{
+    struct udp_socket* udp = udp_socket(ctx, ep);
+    if (!udp)
+        return NULL;
+
+#ifdef SO_REUSEPORT
+    int opt = 1;
+    setsockopt(udp->socket, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(int));
+#endif
+
+    if (bind(udp->socket, &udp->ep.sa, udp->ep.sa_len) < 0)
+        return NULL;
+
+    return udp;
+}
+
 typedef void (*udp_recv_callback)(int err, struct udp_socket* s, struct endpoint* ep, int bytes_transfered, void* obj);
 typedef void (*udp_send_callback)(int err, struct udp_socket* s, struct endpoint* ep, int bytes_transfered, void* obj);
-
-static inline
-int udp_connect(struct udp_socket* s, struct endpoint ep, udp_connect_callback callback, void* obj)
-{
-    if (s->socket <= 0)
-        s->socket = socket(ep.sa.sa_family, SOCK_DGRAM, 0);
-
-    int err = connect(s->socket, &ep.sa, ep.sa_len);
-    if (err != 0)
-    {
-        err = -errno;
-        if (err != -EAGAIN && err != -EWOULDBLOCK)
-        {
-            close(s->socket);
-            s->socket = -1;
-        }
-    }
-
-    s->ep = ep;
-
-    if (callback)
-        callback(err, s, &s->ep, obj);
-
-    return err;
-}
 
 static inline
 int udp_recvfrom(struct udp_socket* s, void* buffer, int size, struct endpoint* ep, udp_recv_callback callback, void* obj)
@@ -130,9 +100,6 @@ int udp_send(struct udp_socket* s, const void* buffer, int size, udp_send_callba
 {
     return udp_sendto(s, buffer, size, &s->ep, callback, obj);
 }
-
-void udp_async_connect(struct udp_socket* s, struct endpoint ep,
-                       udp_connect_callback callback, void* obj);
 
 void udp_async_recvfrom(struct udp_socket* s, void* buffer, int size, struct endpoint* ep,
                        udp_recv_callback callback, void* obj);
