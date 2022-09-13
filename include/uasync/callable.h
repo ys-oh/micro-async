@@ -117,7 +117,7 @@ typedef struct callable_obj_base {
     void (*invoke)(void*);
 } callable_obj_base;
 
-#define COMMA_UNWRAP(__VA_ARGS__) VA_IGNORE_ONE(0 __VA_ARGS__)
+#define COMMA_UNWRAP(...) VA_IGNORE_ONE(0 __VA_ARGS__)
 #define PASS_ARG(arg, N) arg
 #define COMMA_ARG(arg, N) ,arg
 #define TYPE_PLACE_ARG(type, N) type ARG_CAT(_, N);
